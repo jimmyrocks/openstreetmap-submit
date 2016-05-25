@@ -1,0 +1,32 @@
+{
+  "contributors": [{
+    "name": "Jim McAndrew",
+    "email": "james_mcandrew@partner.nps.gov"
+  }, {
+    "name": "Nate Irwin",
+    "email": "nate_irwin@nps.gov"
+  }],
+  "dependencies": {
+    "geojsonToOsm": "git+https://github.com/jimmyrocks/geojsonToOsm",
+    "jm-tools": "git+https://github.com/jimmyrocks/jm-tools",
+    "oauth": "0.9.14",
+    "superagent": "2.0.0-alpha.3",
+    "superagent-oauth": "0.2.3",
+    "xmljs_trans_js": "git+https://github.com/jimmyrocks/xmljs_trans_js#master"
+  },
+  "description": "Uploads data into an OpenStreetMap style database",
+  "keywords": ["nps", "geojson", "openstreetmap"],
+  "author": "Jim McAndrew <james_mcandrew@partner.nps.gov>",
+  "license": "Public Domain",
+  "main": "index.js",
+  "name": "openstreetmap-submit",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/jimmyrocks/openstreetmap-submit"
+  },
+  "scripts": {
+    "start": "node index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.0.1"
+}

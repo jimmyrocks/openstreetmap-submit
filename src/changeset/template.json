@@ -1,0 +1,27 @@
+{
+  "osm": {
+    "changeset": {
+      "version": "0.3",
+      "generator": "Places Sync",
+      "tag": [{
+        "k": "nps:source_system",
+        "v": "Places Sync"
+      }, {
+        "k": "comment",
+        "v": "Automatic Upload"
+      }, {
+        "k": "created_by",
+        "v": "Places Sync"
+      }, {
+        "k": "imagery_user",
+        "v": "no"
+      }, {
+        "k": "source",
+        "v": "Places Sync"
+      }, {
+        "k": "bot",
+        "v": "yes"
+      }]
+    }
+  }
+}
