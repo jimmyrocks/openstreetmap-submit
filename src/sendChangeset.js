@@ -1,8 +1,9 @@
-var tools = require('jm-tools');
+var closeChangeset = require('./changeset/close');
+var createResult = require('./changeset/createResult');
+var geojsonToOsm = require('geojsonToOsm');
 var openChangeset = require('./changeset/open');
 var postChangeset = require('./changeset/post');
-var closeChangeset = require('./changeset/close');
-var geojsonToOsm = require('geojsonToOsm');
+var tools = require('jm-tools');
 
 module.exports = function (data, type, osmConnection) {
   var taskList = [{
@@ -13,7 +14,7 @@ module.exports = function (data, type, osmConnection) {
     }, {
       'name': 'convert to xml',
       'description': 'Then we can convert that geojson to XML for the places server',
-      'task': geojsonToOsm
+      'task': geojsonToOsm,
       'params': ['changeset', '{{open changeset}}', data, {
         'generator': 'Places Sync',
         'changeType': type,
@@ -32,7 +33,7 @@ module.exports = function (data, type, osmConnection) {
     }, {
       'name': 'create result',
       'description': 'Gathers the result data and reports the OSM id for a primary key',
-      'task': tools.syncPromise(createResult),
+      'task': createResult,
       'params': ['{{post data to openstreetmap}}', '{{convert to xml}}']
     }];
     return tools.iterateTasks(taskList);
