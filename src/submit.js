@@ -1,4 +1,7 @@
 var breakUpGeojson = require('./breakUpGeojson');
+var compileResults = require('./compileResults');
+var sendChangeset = require('./sendChangeset');
+var tools = require('jm-tools');
 
 module.exports = function (connection) {
   return function (create, modify, remove) {
@@ -8,7 +11,7 @@ module.exports = function (connection) {
     };
 
     var tasks = [];
-    simplifyGeojson(create, options.limit).forEach(function (data) {
+    breakUpGeojson(create, options.limit).forEach(function (data) {
       tasks.push({
         'type': 'create',
         'data': data
