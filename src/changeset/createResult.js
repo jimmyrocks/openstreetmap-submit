@@ -1,5 +1,5 @@
 // Creates a result of the changeset so we can determine what is stored in OpenStreetMap
-var xmlJs = require('whatever');
+var xmlJs = require('xmljs_trans_js');
 var keyValueToObj = require('./keyValueToObj');
 var tools = require('jm-tools');
 
