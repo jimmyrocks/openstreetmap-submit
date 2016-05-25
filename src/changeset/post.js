@@ -1,3 +1,5 @@
+var Promise = require('bluebird');
+
 module.exports = function (user, changesetNumber, changesetXml) {
   return new Promise(function (resolve, reject) {
     user.oauth.post(
