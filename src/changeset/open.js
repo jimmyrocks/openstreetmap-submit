@@ -1,7 +1,7 @@
 // Opens a changeset, returns the changeset number
 var Promise = require('bluebird');
 var changesetJson = require('./template');
-var xmlJs = require('whatever');
+var xmlJs = require('xmljs_trans_js');
 
 module.exports = function (user) {
   return new Promise(function (resolve, reject) {
