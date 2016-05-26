@@ -1,5 +1,5 @@
 var breakUpGeojson = require('./breakUpGeojson');
-var compileResults = require('./compileResults');
+var compileResults = require('./changeset/compileResults');
 var sendChangeset = require('./sendChangeset');
 var tools = require('jm-tools');
 
