@@ -30,7 +30,7 @@ module.exports = function (data, type, osmConnection, options) {
     'name': 'create result',
     'description': 'Gathers the result data and reports the OSM id for a primary key',
     'task': createResult,
-    'params': ['{{post data to openstreetmap}}', '{{convert to xml}}']
+    'params': ['{{post data to openstreetmap}}', '{{convert to xml}}', options]
   }];
   return tools.iterateTasks(taskList);
 };
