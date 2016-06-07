@@ -3,7 +3,7 @@ var xmlJs = require('xmljs_trans_js');
 var keyValueToObj = require('./keyValueToObj');
 var tools = require('jm-tools');
 
-module.exports = function (postResultXml, changesetXml) {
+module.exports = function (postResultXml, changesetXml, options) {
   var postResultJS = xmlJs.jsonify(postResultXml);
   var changesetJS = xmlJs.jsonify(changesetXml);
   console.log(postResultJS);
@@ -40,8 +40,8 @@ module.exports = function (postResultXml, changesetXml) {
             'nodeLat': matchedChange.lat,
             'wayNodes': JSON.stringify(wayNodes),
             'action': action,
-            'sourceId': matchedChange.primaryKey,
-            'sourceVersion': matchedChange.lastEdit,
+            'sourceId': matchedChange[options.primaryKey],
+            'sourceVersion': matchedChange[options.lastEdit],
             'tagsHash': tools.md5(JSON.stringify(tags))
           });
         });
