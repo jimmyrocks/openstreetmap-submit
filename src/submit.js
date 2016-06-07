@@ -3,12 +3,10 @@ var compileResults = require('./changeset/compileResults');
 var sendChangeset = require('./sendChangeset');
 var tools = require('jm-tools');
 
-module.exports = function (connection) {
+module.exports = function (connection, options) {
   return function (create, modify, remove) {
-    // TODO open this up as a config somewhere
-    var options = {
-      'limit': 15
-    };
+    options = options || {};
+    options.limit = options.limit || 15;
 
     var tasks = [];
     breakUpGeojson(create, options.limit).forEach(function (data) {
@@ -23,7 +21,7 @@ module.exports = function (connection) {
         'name': 'Changeset ' + i,
         'description': 'Creating a changeset for this subset of geojson',
         'task': sendChangeset,
-        'params': [task.data, task.type, connection]
+        'params': [task.data, task.type, connection, options]
       };
     })).then(function (results) {
       return compileResults(results);
