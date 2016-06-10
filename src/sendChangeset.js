@@ -1,11 +1,13 @@
 var closeChangeset = require('./changeset/close');
 var createResult = require('./changeset/createResult');
 var geojsonToOsm = require('geojsonToOsm');
+var modifyMemberTasks = require('./modifyMemberTasks');
 var openChangeset = require('./changeset/open');
 var postChangeset = require('./changeset/post');
 var tools = require('jm-tools');
 
-module.exports = function (data, type, osmConnection, options) {
+var sendChangeset = function (data, type, osmConnection, options) {
+  options.changeType = type;
   var taskList = [{
     'name': 'open changeset',
     'description': 'open a changeset on the OSM server',
@@ -33,4 +35,23 @@ module.exports = function (data, type, osmConnection, options) {
     'params': ['{{post data to openstreetmap}}', '{{convert to xml}}', options]
   }];
   return tools.iterateTasks(taskList);
+};
+module.exports = function (data, type, osmConnection, options) {
+  if (type === 'create') {
+    return sendChangeset(data, type, osmConnection, options);
+  } else {
+    // The delete and modify tasks may also require deleting or modifying existing nodes / ways
+    return modifyMemberTasks(data, type, osmConnection, options).then(function (tasks) {
+      return tools.iterateTasks(tasks.map(function (task, i) {
+        return {
+          'name': 'changeset part ' + i,
+          'task': sendChangeset,
+          'params': task
+        };
+      }));
+    }).then(function (results) {
+      // TODO This probably will need some cleanup
+      return results;
+    });
+  }
 };
