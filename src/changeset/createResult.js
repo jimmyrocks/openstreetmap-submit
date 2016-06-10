@@ -40,8 +40,7 @@ module.exports = function (postResultXml, changesetXml, options) {
             'nodeLat': matchedChange.lat,
             'wayNodes': JSON.stringify(wayNodes),
             'action': action,
-            'sourceId': matchedChange[options.primaryKey],
-            'sourceVersion': matchedChange[options.lastEdit],
+            'sourceId': matchedChange[options.foreignKeyField],
             'tagsHash': tools.md5(JSON.stringify(tags))
           });
         });
