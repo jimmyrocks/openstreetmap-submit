@@ -1,6 +1,6 @@
 var breakUpGeojson = require('./breakUpGeojson');
-var compileResults = require('./changeset/compileResults');
 var sendChangeset = require('./sendChangeset');
+var compileResults = require('./changeset/compileResults');
 var tools = require('jm-tools');
 
 module.exports = function (connection, options) {
@@ -8,12 +8,24 @@ module.exports = function (connection, options) {
   options.limit = options.limit || 15;
 
   return function (create, modify, remove) {
+    // Put the arguments into an obect
+    var inputs = {
+      'create': create,
+      'modify': modify,
+      'remove': remove
+    };
+
     var tasks = [];
-    breakUpGeojson(create, options.limit).forEach(function (data) {
-      if (data.features && data.features.length) {
-        tasks.push({
-          'type': 'create',
-          'data': data
+
+    Object.keys(inputs).forEach(function (key) {
+      if (inputs[key]) {
+        breakUpGeojson(inputs[key], options.limit).forEach(function (data) {
+          if (data.features && data.features.length) {
+            tasks.push({
+              'type': key,
+              'data': data
+            });
+          }
         });
       }
     });
