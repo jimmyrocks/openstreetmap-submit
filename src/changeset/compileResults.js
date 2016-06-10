@@ -1,9 +1,12 @@
-// This doesn't appear to do much
-//
+var arrayify = require('jm-tools').arrayify;
+// Compiles all the results into one object
 module.exports = function (results) {
+  console.log(results);
   var returnValue = [];
-  results.forEach(function (result) {
-    returnValue.push(result);
+  arrayify(results).forEach(function (result) {
+    arrayify(result[result.length - 1]).forEach(function (record) {
+      returnValue.push(record);
+    });
   });
   return returnValue;
 };
