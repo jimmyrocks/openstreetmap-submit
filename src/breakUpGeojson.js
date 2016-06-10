@@ -1,7 +1,7 @@
 // Breaks a large geojson file into smaller changesets
 module.exports = function (geojson, limit) {
   geojson = typeof geojson === 'string' ? JSON.parse(geojson) : geojson;
-  var container = copy(geojson);
+  var container = copy(geojson) || {};
   container.features = [];
   var featureGroups = [];
 
