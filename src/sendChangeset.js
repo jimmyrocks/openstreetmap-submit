@@ -86,7 +86,13 @@ var updateChangesetValues = function (jsonChangeset, previousMasterResult) {
   process.exit(0);
 };
 
-var createMasterResult = function (jsonChangeset, thisResult, previousMasterResult) {};
+var createMasterResult = function (jsonChangeset, thisResult, previousMasterResult) {
+  console.log('jsonChangeset', jsonChangeset);
+  console.log('thisResult', thisResult);
+  console.log('previousMasterResult', previousMasterResult);
+  process.exit(0);
+
+};
 
 var commitChangeset = function (changesetJson, osmConnection, options) {
   var taskList = [{
