@@ -90,8 +90,16 @@ var createMasterResult = function (jsonChangeset, thisResult, previousMasterResu
   console.log('jsonChangeset', jsonChangeset);
   console.log('thisResult', thisResult);
   console.log('previousMasterResult', previousMasterResult);
+  var newResult = [];
+  var inputs = [previousMasterResult, thisResult];
+  inputs.forEach(function (group) {
+    group = group ? tools.arrayify(group) : [];
+    group.forEach(function (result) {
+      newResult.push(result);
+    });
+  });
+  console.log(newResult);
   process.exit(0);
-
 };
 
 var commitChangeset = function (changesetJson, osmConnection, options) {
