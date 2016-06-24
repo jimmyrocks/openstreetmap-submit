@@ -1,5 +1,4 @@
 var Promise = require('bluebird');
-var xmlJs = require('xmljs_trans_js')
 var closeChangeset = require('./changeset/close');
 var createResult = require('./changeset/createResult');
 var geojsonToOsm = require('geojsonToOsm');
@@ -70,18 +69,24 @@ var sendChangeset = function (data, type, osmConnection, options) {
   });
 };
 
-var updateChangesetId = function(jsonChangeset, changesetId) {
-  console.log(jsonChangeset, changesetId);
-  process.exit(0);
+var updateChangesetId = function (jsonChangeset, changesetId) {
+  var newJsonChangeset = {};
+  Object.keys(jsonChangeset).forEach(function (elementType) {
+    var elements = JSON.parse(JSON.stringify(jsonChangeset[elementType]));
+    newJsonChangeset[elementType] = elements.map(function (element) {
+      element.changeset = changesetId;
+      return element;
+    });
+  });
+  return newJsonChangeset;
 };
 
-var updateChangesetValues = function(jsonChangeset, previousMasterResult) {
+var updateChangesetValues = function (jsonChangeset, previousMasterResult) {
   console.log(previousMasterResult);
   process.exit(0);
 };
 
-var createMasterResult = function(jsonChangeset, thisResult, previousMasterResult) {
-};
+var createMasterResult = function (jsonChangeset, thisResult, previousMasterResult) {};
 
 var commitChangeset = function (changesetJson, osmConnection, options) {
   var taskList = [{
@@ -97,8 +102,8 @@ var commitChangeset = function (changesetJson, osmConnection, options) {
   }, {
     'name': 'xmlChangeset',
     'description': 'Converts the JSON changeset to XML',
-    'task': xmlJs.xmlify,
-    'params': ['{{completeChangeset}}']
+    'task': geojsonToOsm.js2xml,
+    'params': ['changeset', '{{completeChangeset}}', options]
   }, {
     'name': 'post data to openstreetmap',
     'description': 'Then we can run that on the places server',
