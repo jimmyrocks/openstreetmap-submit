@@ -14,7 +14,7 @@ module.exports = function (postResultXml, changesetXml, options) {
   var refList = {};
   types.forEach(function (type) {
     var typeResults = postResultJS && postResultJS.diffResult && postResultJS.diffResult[type];
-    typeResults = Array.isArray(typeResults) ? typeResults : [];
+    typeResults = typeResults ? tools.arrayify(typeResults) : [];
     refList[type] = typeResults;
     typeResults.forEach(function (element) {
       actions.forEach(function (action) {
