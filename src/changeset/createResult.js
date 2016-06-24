@@ -19,7 +19,7 @@ module.exports = function (postResultXml, changesetXml, options) {
     typeResults.forEach(function (element) {
       actions.forEach(function (action) {
         var osmChangeAction = changesetJS && changesetJS.osmChange && changesetJS.osmChange[action] && changesetJS.osmChange[action][type];
-        osmChangeAction = Array.isArray(osmChangeAction) ? osmChangeAction : [];
+        osmChangeAction = osmChangeAction ? tools.arrayify(osmChangeAction) : [];
         osmChangeAction.filter(function (change) {
           return change.id === element.old_id;
         }).forEach(function (matchedChange) {
