@@ -1,4 +1,3 @@
-var breakUpGeojson = require('./breakUpGeojson');
 var sendChangeset = require('./sendChangeset');
 var compileResults = require('./changeset/compileResults');
 var tools = require('jm-tools');
@@ -18,15 +17,14 @@ module.exports = function (connection, options) {
     var tasks = [];
 
     Object.keys(inputs).forEach(function (key) {
-      if (inputs[key]) {
-        breakUpGeojson(inputs[key], options.limit).forEach(function (data) {
-          if (data.features && data.features.length) {
-            tasks.push({
-              'type': key,
-              'data': data
-            });
-          }
-        });
+      var data = inputs[key];
+      if (data) {
+        if (data.features && data.features.length) {
+          tasks.push({
+            'type': key,
+            'data': data
+          });
+        }
       }
     });
 
