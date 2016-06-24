@@ -34,6 +34,7 @@ module.exports = function (postResultXml, changesetXml, options) {
           }) : undefined;
           result.push({
             'osmId': element.new_id,
+            'oldId': element.old_id,
             'osmVersion': element.new_version,
             'osmType': type,
             'nodeLon': matchedChange.lon,
