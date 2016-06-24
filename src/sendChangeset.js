@@ -61,7 +61,7 @@ var sendChangeset = function (data, type, osmConnection, options) {
         'name': 'compiledChangesetResults' + i,
         'description': 'combines the results from the most recent changeset with the previous ones that ran',
         'task': createMasterResult,
-        'params': [jsonChangeset, '{{changeset' + i + '}}', (i > 0 ? ('{{compiledChangesetResults' + (i - 1) + '}}') : null)]
+        'params': ['{{changeset' + i + '.createResult}}', (i > 0 ? ('{{compiledChangesetResults' + (i - 1) + '}}') : null)]
       });
     });
 
@@ -82,14 +82,53 @@ var updateChangesetId = function (jsonChangeset, changesetId) {
 };
 
 var updateChangesetValues = function (jsonChangeset, previousMasterResult) {
-  console.log(previousMasterResult);
-  process.exit(0);
+  console.log('jsonChangeset', JSON.stringify(jsonChangeset, null, 2));
+  console.log('previousMasterResult', JSON.stringify(previousMasterResult, null, 2));
+  var newJsonChangeset = {};
+
+  var matchToRecord = function (elementType, element) {
+    return previousMasterResult.filter(function (result) {
+      return result.osmType === elementType && result.oldId === element.id && (element.version ? result.osmVersion === element.version : true);
+    })[0];
+  };
+
+  Object.keys(jsonChangeset).forEach(function (elementType) {
+    newJsonChangeset[elementType] = jsonChangeset[elementType].map(function (element) {
+      // Update the element's id (this usually won't happen)
+      var matchedRecord = matchToRecord(elementType, element);
+      element.id = matchedRecord ? matchedRecord.osmId : element.id;
+
+      // Update the nodes
+      if (element.nd) {
+        element.nd = element.nd.map(function (nd) {
+          var ndElement = {
+            'id': nd.ref
+          };
+          matchedRecord = matchToRecord('node', ndElement);
+          nd.ref = matchedRecord ? matchedRecord.osmId : nd.ref;
+        });
+      }
+
+      // Update the members
+      if (element.member) {
+        element.member = element.member.map(function (member) {
+          var memberElement = {
+            'id': member.ref
+          };
+          matchedRecord = matchedRecord(member.type, memberElement);
+          member.ref = matchedRecord ? matchedRecord.osmId : member.ref;
+        });
+      }
+
+      return element;
+    });
+  });
+
+  console.log('newJsonChangeset', JSON.stringify(newJsonChangeset, null, 1));
+  return newJsonChangeset;
 };
 
-var createMasterResult = function (jsonChangeset, thisResult, previousMasterResult) {
-  console.log('jsonChangeset', jsonChangeset);
-  console.log('thisResult', thisResult);
-  console.log('previousMasterResult', previousMasterResult);
+var createMasterResult = function (thisResult, previousMasterResult) {
   var newResult = [];
   var inputs = [previousMasterResult, thisResult];
   inputs.forEach(function (group) {
@@ -98,8 +137,7 @@ var createMasterResult = function (jsonChangeset, thisResult, previousMasterResu
       newResult.push(result);
     });
   });
-  console.log(newResult);
-  process.exit(0);
+  return newResult;
 };
 
 var commitChangeset = function (changesetJson, osmConnection, options) {
