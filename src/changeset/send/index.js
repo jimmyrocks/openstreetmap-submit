@@ -61,8 +61,7 @@ module.exports = function (data, type, osmConnection, options) {
         };
       }));
     }).then(function (results) {
-      // TODO Make this cleaner
-      return results;
+      return tools.arrayGetLast(results);
     });
   }
 };
