@@ -1,7 +1,7 @@
 var Promise = require('bluebird');
 var tools = require('jm-tools');
 var xmlJs = require('xmljs_trans_js');
-var keyValueToObj = require('./changeset/keyValueToObj');
+var keyValueToObj = require('../keyValueToObj');
 
 /* GeoJSON supports the following geometry types: Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, and GeometryCollection. */
 var geojsonTypeToOsmType = {
