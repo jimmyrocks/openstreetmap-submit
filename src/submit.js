@@ -1,10 +1,9 @@
-var sendChangeset = require('./sendChangeset');
+var sendChangeset = require('./changeset/send');
 var compileResults = require('./changeset/compileResults');
 var tools = require('jm-tools');
 
 module.exports = function (connection, options) {
   options = options || {};
-  options.limit = options.limit || 15;
 
   return function (create, modify, remove) {
     // Put the arguments into an obect
