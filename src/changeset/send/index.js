@@ -60,8 +60,6 @@ module.exports = function (data, type, osmConnection, options) {
           'params': task
         };
       }));
-    }).then(function (results) {
-      return tools.arrayGetLast(results);
     });
   }
 };
