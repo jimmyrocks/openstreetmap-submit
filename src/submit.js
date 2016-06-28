@@ -2,15 +2,25 @@ var sendChangeset = require('./changeset/send');
 var compileResults = require('./changeset/compileResults');
 var tools = require('jm-tools');
 
+var tryParse = function (input) {
+  var returnValue = {};
+  try {
+    returnValue = (typeof input === 'string' ? JSON.parse(input) : string);
+  } catch (e) {
+    returnValue = input;
+  }
+  return returnValue;
+};
+
 module.exports = function (connection, options) {
   options = options || {};
 
   return function (create, modify, remove) {
     // Put the arguments into an obect
     var inputs = {
-      'create': create,
-      'modify': modify,
-      'remove': remove
+      'create': tryParse(create),
+      'modify': tryParse(modify),
+      'remove': tryParse(remove)
     };
 
     var tasks = [];
