@@ -23,7 +23,7 @@ module.exports = function (chunkedArray, osmConnection, options) {
       'name': 'compiledChangesetResults' + i,
       'description': 'combines the results from the most recent changeset with the previous ones that ran',
       'task': createMasterResult,
-      'params': ['{{changeset' + i + '.createResult}}', (i > 0 ? ('{{compiledChangesetResults' + (i - 1) + '}}') : null), 'Completed: ' + i + ' / ' + (chunkedArray.length - 1)]
+      'params': ['{{changeset' + i + '.createResult}}', (i > 0 ? ('{{compiledChangesetResults' + (i - 1) + '}}') : null), 'Completed Changeset: ' + (i + 1) + ' / ' + (chunkedArray.length)]
     });
   });
   return tasks;
