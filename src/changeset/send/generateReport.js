@@ -1,6 +1,6 @@
-var arrayGetLast = require('jm-tools').arrayGetLast;
+// var arrayGetLast = require('jm-tools').arrayGetLast;
 
 module.exports = function (results) {
   // TODO combine the results into something readable
-  return arrayGetLast(results);
+  return results; // arrayGetLast(results);
 };
