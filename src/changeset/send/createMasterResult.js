@@ -1,6 +1,6 @@
 var arrayify = require('jm-tools').arrayify;
 
-module.exports = function (thisResult, previousMasterResult) {
+module.exports = function (thisResult, previousMasterResult, msg) {
   var newResult = [];
   var inputs = [previousMasterResult, thisResult];
   inputs.forEach(function (group) {
@@ -9,5 +9,6 @@ module.exports = function (thisResult, previousMasterResult) {
       newResult.push(result);
     });
   });
+  console.log(msg);
   return newResult;
 };
