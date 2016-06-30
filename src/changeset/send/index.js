@@ -36,7 +36,7 @@ var sendChangeset = function (data, type, osmConnection, options) {
   }, {
     'name': 'completedTaskList',
     'description': 'Runs the task list',
-    'task': tools.iterateTasks,
+    'task': tools.iterateTasksLight,
     'params': ['{{taskList}}', 'splitChangesetTaskList']
   }, {
     'name': 'generatedReport',
@@ -44,7 +44,7 @@ var sendChangeset = function (data, type, osmConnection, options) {
     'task': generateReport,
     'params': ['{{completedTaskList}}']
   }];
-  return tools.iterateTasks(tasks, 'sendChangeset');
+  return tools.iterateTasksLight(tasks, 'sendChangeset');
 };
 
 module.exports = function (data, type, osmConnection, options) {
@@ -53,7 +53,7 @@ module.exports = function (data, type, osmConnection, options) {
   } else {
     // The delete and modify tasks may also require deleting or modifying existing nodes / ways
     return modifyMemberTasks(data, type, osmConnection, options).then(function (tasks) {
-      return tools.iterateTasks(tasks.map(function (task, i) {
+      return tools.iterateTasksLight(tasks.map(function (task, i) {
         return {
           'name': 'changeset part ' + i,
           'task': sendChangeset,
