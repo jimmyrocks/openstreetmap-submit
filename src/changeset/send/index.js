@@ -36,8 +36,8 @@ var sendChangeset = function (data, type, osmConnection, options) {
     'name': 'completedTaskList',
     'description': 'Runs the task list',
     'task': function (tasks, name) {
-      return tools.iterateTasksLight(tasks, name).then(function () {
-        return tasks[tasks.length - 1];
+      return tools.iterateTasksLight(tasks, name).then(function (results) {
+        return results[tasks.length - 1];
       });
     },
     'params': ['{{taskList}}', 'splitChangesetTaskList']
