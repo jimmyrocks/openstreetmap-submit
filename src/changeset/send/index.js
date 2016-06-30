@@ -1,6 +1,5 @@
 var chunkArray = require('./chunkArray');
 var copy = require('./copy');
-var generateReport = require('./generateReport');
 var generateTasks = require('./generateTasks');
 var geojsonToOsm = require('geojsonToOsm');
 var modifyMemberTasks = require('./modifyMemberTasks');
@@ -36,14 +35,18 @@ var sendChangeset = function (data, type, osmConnection, options) {
   }, {
     'name': 'completedTaskList',
     'description': 'Runs the task list',
-    'task': tools.iterateTasksLight,
+    'task': function (tasks, name) {
+      return tools.iterateTasksLight(tasks, name).then(function () {
+        return tasks[tasks.length - 1];
+      });
+    },
     'params': ['{{taskList}}', 'splitChangesetTaskList']
-  }, {
+  }/*, {
     'name': 'generatedReport',
     'description': 'Generates a report of what changes were made',
     'task': generateReport,
     'params': ['{{completedTaskList}}']
-  }];
+  }*/];
   return tools.iterateTasksLight(tasks, 'sendChangeset');
 };
 
