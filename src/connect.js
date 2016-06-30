@@ -16,7 +16,6 @@ var initialize = function (source) {
       null,
       'HMAC-SHA1');
     // Get User Details /0.6/user/details
-    console.log(source.connection.address + '0.6/user/details.json');
     superagent.get(source.connection.address + '0.6/user/details.json')
       .sign(oauth, source.connection.access_key, source.connection.access_secret)
       .end(function (err, res) {
