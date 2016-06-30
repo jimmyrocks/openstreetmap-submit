@@ -37,7 +37,7 @@ module.exports = function (connection, options) {
       }
     });
 
-    return tools.iterateTasks(tasks.map(function (task, i) {
+    return tools.iterateTasksLight(tasks.map(function (task, i) {
       return {
         'name': 'Changeset ' + i,
         'description': 'Creating a changeset for this subset of geojson',
