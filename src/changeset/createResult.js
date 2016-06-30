@@ -6,7 +6,6 @@ var tools = require('jm-tools');
 module.exports = function (postResultXml, changesetXml, options) {
   var postResultJS = xmlJs.jsonify(postResultXml);
   var changesetJS = xmlJs.jsonify(changesetXml);
-  console.log(postResultJS);
 
   var result = [];
   var types = ['node', 'way', 'relation'];
