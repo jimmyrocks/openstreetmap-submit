@@ -1,4 +1,5 @@
 var chunkArray = require('./chunkArray');
+var combineChangesetResults = require('./combineChangesetResults');
 var copy = require('./copy');
 var generateTasks = require('./generateTasks');
 var geojsonToOsm = require('geojsonToOsm');
@@ -7,9 +8,9 @@ var osmJsonToArray = require('./osmJsonToArray');
 var tools = require('jm-tools');
 
 var sendChangeset = function (data, type, osmConnection, options) {
-  var newOptions = copy(options);
+  var newOptions = copy(options) || {};
   newOptions.changeType = type;
-  newOptions.changesetElements = options.changesetElements || 1000;
+  newOptions.changesetElements = newOptions.changesetElements || 1000;
   newOptions.returnJson = true;
 
   var tasks = [{
@@ -41,12 +42,7 @@ var sendChangeset = function (data, type, osmConnection, options) {
       });
     },
     'params': ['{{taskList}}', 'splitChangesetTaskList']
-  }/*, {
-    'name': 'generatedReport',
-    'description': 'Generates a report of what changes were made',
-    'task': generateReport,
-    'params': ['{{completedTaskList}}']
-  }*/];
+  }];
   return tools.iterateTasksLight(tasks, 'sendChangeset');
 };
 
@@ -62,7 +58,9 @@ module.exports = function (data, type, osmConnection, options) {
           'task': sendChangeset,
           'params': task
         };
-      }));
+      })).then(function (results) {
+        return combineChangesetResults(results);
+      });
     });
   }
 };
