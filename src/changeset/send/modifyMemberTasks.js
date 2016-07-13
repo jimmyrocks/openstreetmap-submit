@@ -14,9 +14,15 @@ var geojsonTypeToOsmType = {
 };
 
 var wrapFeatures = function (features) {
+  var featureArray = [];
+  features.forEach(function (featureGroup) {
+    featureGroup.forEach(function (feature) {
+      featureArray.push(feature);
+    });
+  });
   return {
     'type': 'FeatureCollection',
-    'features': tools.arrayify(features)
+    'features': featureArray
   };
 };
 
@@ -40,15 +46,20 @@ var getUrlXmlAsJson = function (osmConnection, osmType, osmId) {
 };
 
 var generateModifyTasks = function (osmConnection, osmType, osmId, feature, changeType, options) {
+  // All changes can contain a node, but only relations can contain a way
   var changeTypes = ['node'];
   if (osmType === 'relation') {
     changeTypes.push('way');
   }
   var changes = [];
+
+  // Go out to the server and get the info for the element, then convert it from XML to JSON
   return getUrlXmlAsJson(osmConnection, osmType, osmId).then(function (result) {
     // TODO: Look into what a modify / delete instruction looks like
     // TODO: This is where the matching to closest point code will go
     var members = (result && result.osm) || {};
+
+    // Go through the change types that we may need to update, and replace the with the members from before
     changeTypes.forEach(function (geometryType) {
       tools.arrayify(members[geometryType]).forEach(function (element) {
         changes.push({
@@ -77,46 +88,41 @@ var generateModifyTasks = function (osmConnection, osmType, osmId, feature, chan
     // Split the create, modify, and removes into their own tasks
     Object.keys(taskTypes).forEach(function (type) {
       if (taskTypes[type].length > 0) {
-        newTasks.push([wrapFeatures(taskTypes[type]), type, osmConnection, options]);
+        newTasks.push([taskTypes[type], type]);
       }
     });
 
     // Add the original task (TODO: the feature may change if we start modifying it a little!)
-    newTasks.push([feature, changeType, osmConnection, options]);
+    newTasks.push([
+      [feature], changeType
+    ]);
 
-    console.log('@@@@ newTasks @@@@');
-    console.log(newTasks);
-    console.log('@@@@ newTasks @@@@');
     return newTasks;
   });
 };
 
 module.exports = function (data, type, osmConnection, options) {
-  // go through the new data and get a list of ways and relations to pull from the server
+  // go through the new data and get a list of ways and relations that need to be pulled from the server
   var features = data.features || [];
   var osmIdField = options.osmIdField;
   var osmRequests = [];
 
+  // Go through the features and convert them into requests
   features.forEach(function (feature) {
     // Make sure its a geojson feature and it has the osmIdField
-    console.log('FEAT', osmIdField, feature[osmIdField]);
     if (feature.type === 'Feature' && feature[osmIdField] !== undefined) {
-      console.log('FEAT1');
       var osmType = geojsonTypeToOsmType[feature.geometry && feature.geometry.type];
       if (osmType === 'way' || osmType === 'relation') {
-        console.log('FEAT2');
         osmRequests.push({
           'osmId': feature[osmIdField],
           'feature': feature,
           'osmType': osmType
         });
-      } else {
-        console.log('FEAT3', osmType);
-      }
+      } else {}
     }
   });
 
-  console.log(osmRequests);
+  // Iterate through all of those requests
   return tools.iterateTasks(osmRequests.map(function (request) {
     return {
       'name': 'Getting Element: ' + request.osmType + ': ' + request.osmId,
@@ -125,12 +131,18 @@ module.exports = function (data, type, osmConnection, options) {
     };
   })).then(function (modifiedTasks) {
     // This just takes all the tasks out of the nested arrayed
-    var combinedTasks = [];
+    var combinedTasks = {
+      'create': [],
+      'modify': [],
+      'delete': []
+    };
     tools.arrayify(modifiedTasks).forEach(function (taskGroup) {
       tools.arrayify(taskGroup).forEach(function (task) {
-        combinedTasks.push(task);
+        combinedTasks[task[1]].push(task[0]);
       });
     });
-    return combinedTasks;
+    return Object.keys(combinedTasks).map(function (key) {
+      return [wrapFeatures(combinedTasks[key]), key, osmConnection, options];
+    });
   });
 };
