@@ -2,16 +2,17 @@ module.exports = function (jsonChangeset, previousMasterResult) {
   var newJsonChangeset = {};
 
   var matchToRecord = function (elementType, element) {
-    return previousMasterResult.filter(function (result) {
+    var matches = previousMasterResult.filter(function (result) {
       return result.osmType === elementType && result.oldId === element.id;
-    })[0];
+    });
+    return matches[0];
   };
 
   Object.keys(jsonChangeset).forEach(function (elementType) {
     newJsonChangeset[elementType] = jsonChangeset[elementType].map(function (element) {
       // Update the element's id (this usually won't happen)
-      var matchedRecord = matchToRecord(elementType, element);
-      element.id = matchedRecord ? matchedRecord.osmId : element.id;
+      var matchedRecord; // = matchToRecord(elementType, element);
+      // element.id = matchedRecord ? matchedRecord.osmId : element.id;
 
       // Update the nodes
       if (element.nd) {
