@@ -34,12 +34,12 @@ module.exports = function (data, type, osmConnection, options) {
   }, {
     'name': 'completedTaskList',
     'description': 'Runs the task list',
-    'task': function (tasks, name, osmJson) {
-      return tools.iterateTasksLight(tasks, name, true).then(function (results) {
+    'task': function (tasks, name) {
+      return tools.iterateTasksLight(tasks, name, false).then(function (results) {
         return results[tasks.length - 1];
       });
     },
-    'params': ['{{taskList}}', 'splitChangesetTaskList', '{{getOsmJson}}']
+    'params': ['{{taskList}}', 'splitChangesetTaskList']
   }];
-  return tools.iterateTasksLight(tasks, 'sendChangeset', true);
+  return tools.iterateTasksLight(tasks, 'sendChangeset', false);
 };
