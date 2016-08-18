@@ -28,7 +28,7 @@ var wrapFeatures = function (features) {
 
 var getUrlXmlAsJson = function (osmConnection, osmType, osmId) {
   return new Promise(function (resolve, reject) {
-    osmConnection.oauth.get(osmConnection.connection.address + '0.6/' + osmType + '/' + osmId + '/full',
+    osmConnection.oauth.get(osmConnection.connection.address + '0.6/' + osmType + '/' + osmId + (osmType === 'node' ? '' : '/full'),
       osmConnection.connection.access_key,
       osmConnection.connection.access_secret,
       function (err, res) {
@@ -47,10 +47,10 @@ var getUrlXmlAsJson = function (osmConnection, osmType, osmId) {
 
 var generateModifyTasks = function (osmConnection, osmType, osmId, feature, changeType, options) {
   // All changes can contain a node, but only relations can contain a way
-  var changeTypes = ['node'];
-  if (osmType === 'relation') {
-    changeTypes.push('way');
-  }
+  var changeTypes = {
+    'way': ['node'],
+    'relation': ['node', 'way']
+  }[osmType] || [];
   var changes = [];
 
   // Go out to the server and get the info for the element, then convert it from XML to JSON
@@ -112,13 +112,11 @@ module.exports = function (data, type, osmConnection, options) {
     // Make sure its a geojson feature and it has the osmIdField
     if (feature.type === 'Feature' && feature[osmIdField] !== undefined) {
       var osmType = geojsonTypeToOsmType[feature.geometry && feature.geometry.type];
-      if (osmType === 'way' || osmType === 'relation') {
-        osmRequests.push({
-          'osmId': feature[osmIdField],
-          'feature': feature,
-          'osmType': osmType
-        });
-      } else {}
+      osmRequests.push({
+        'osmId': feature[osmIdField],
+        'feature': feature,
+        'osmType': osmType
+      });
     }
   });
 
@@ -138,7 +136,9 @@ module.exports = function (data, type, osmConnection, options) {
     };
     tools.arrayify(modifiedTasks).forEach(function (taskGroup) {
       tools.arrayify(taskGroup).forEach(function (task) {
-        combinedTasks[task[1]].push(task[0]);
+        if (task[0] && task[1]) {
+          combinedTasks[task[1]].push(task[0]);
+        }
       });
     });
     return Object.keys(combinedTasks).map(function (key) {
