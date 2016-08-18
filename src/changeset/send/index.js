@@ -9,6 +9,8 @@ module.exports = function (data, type, osmConnection, options) {
   } else {
     // The delete and modify tasks may also require deleting or modifying existing nodes / ways
     return modifyMemberTasks(data, type, osmConnection, options).then(function (tasks) {
+      // console.log(JSON.stringify(tasks, null, 2));
+      // throw new Error('stop');
       return tools.iterateTasksLight(tasks.map(function (task, i) {
         return {
           'name': 'changeset part ' + i,
