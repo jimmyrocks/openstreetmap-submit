@@ -5,7 +5,7 @@ var tools = require('jm-tools');
 var tryParse = function (input) {
   var returnValue = {};
   try {
-    returnValue = (typeof input === 'string' ? JSON.parse(input) : string);
+    returnValue = (typeof input === 'string' ? JSON.parse(input) : input);
   } catch (e) {
     returnValue = input;
   }
